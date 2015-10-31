@@ -53,10 +53,12 @@ $(document).ready(function(){
 		var code = node.compile();
 		if (rootExist(code, $("#bisection-point1").val(), $("#bisection-point2").val()))
 		{
+			$("#bisection-table").html("");
 			$("#bisection-table").append("Root found using bisection search in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"] is "+bisection_root(code, $("#bisection-point1").val(), $("#bisection-point2").val(), $("#bisection-decimal").val()));
 		}
 		else
 		{
+			$("#bisection-table").html("");
 			$("#bisection-table").append("Root does not exist in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"]");
 		}
 		
@@ -74,17 +76,18 @@ $(document).ready(function(){
 		var code = node.compile();
 		if (rootExist(code, $("#false-position-point1").val(), $("#false-position-point2").val()))
 		{
+			$("#false-position-table").html("");
 			$("#false-position-table").append("Root found using false position search in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"] is "+false_position_root(code, $("#false-position-point1").val(), $("#false-position-point2").val(), $("#false-position-decimal").val()));
 		}
 		else
 		{
+			$("#false-position-table").html("");
 			$("#false-position-table").append("Root does not exist in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"]");
 		}
 		
 	});
 	function bisection_root(code,point1,point2,decimal)
 	{
-		$("#bisection-table").html("");
 		var a = roundDecimal(parseFloat(point1),decimal);
 		var b = roundDecimal(parseFloat(point2),decimal);
 		var fa = roundDecimal(code.eval({x:a}),decimal);
@@ -176,7 +179,6 @@ $(document).ready(function(){
 	}
 	function false_position_root(code,point1,point2,decimal)
 	{
-		$("#false-position-table").html("");
 		var a = roundDecimal(parseFloat(point1),decimal);
 		var b = roundDecimal(parseFloat(point2),decimal);
 		var fa = roundDecimal(code.eval({x:a}),decimal);
