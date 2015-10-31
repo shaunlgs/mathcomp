@@ -1,0 +1,300 @@
+<!Doctype html>
+<head>
+	<title>Computational Mathematics - UTM Space</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/2.4.1/math.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+</head>
+<body>
+<h1>Using sevaral methods to find the root of equation</h1>
+<label>Enter your equation: <input type="text" id="equation"></label><br>
+<span id="choose-prompt"><b>Choose a method:</b></span>
+
+<button type="button" id="bisection">Bisection</button>
+<div id="bisection-div" style="display:none;">
+<b>Bisection Method</b><br>
+<label>Enter your intervals: <input type="number" id="bisection-point1"><input type="number" id="bisection-point2"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="bisection-decimal"></label>
+<button type="submit" id="bisection-calculate">Calculate</button><button class="choose">Choose another method</button>
+<div id="bisection-table">
+</div>
+<br>
+</div>
+
+<button type="button" id="false-position">False Position</button>
+<div id="false-position-div" style="display:none;">
+<b>False Position Method</b><br>
+<label>Enter your intervals: <input type="number" id="false-position-point1"><input type="number" id="false-position-point2"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="false-position-decimal"></label>
+<button type="submit" id="false-position-calculate">Calculate</button><button class="choose">Choose another method</button>
+<div id="false-position-table">
+</div>
+<br>
+</div>
+
+<button type="button" id="secant">Secant</button>
+
+<button type="button" id="newton">Newton</button>
+
+<script>
+$(document).ready(function(){
+	$("#bisection").click(function(){
+		$("#choose-prompt").hide();
+		$("#bisection").hide();
+		$("#false-position").hide();
+		$("#secant").hide();
+		$("#newton").hide();
+		$("#bisection-div").show();
+	});
+	$("#bisection-calculate").click(function(){
+		var node = math.parse($("#equation").val());
+		var code = node.compile();
+		if (rootExist(code, $("#bisection-point1").val(), $("#bisection-point2").val()))
+		{
+			$("#bisection-table").append("Root found using bisection search in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"] is "+bisection_root(code, $("#bisection-point1").val(), $("#bisection-point2").val(), $("#bisection-decimal").val()));
+		}
+		else
+		{
+			$("#bisection-table").append("Root does not exist in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"]");
+		}
+		
+	});
+	$("#false-position").click(function(){
+		$("#choose-prompt").hide();
+		$("#bisection").hide();
+		$("#false-position").hide();
+		$("#secant").hide();
+		$("#newton").hide();
+		$("#false-position-div").show();
+	});
+	$("#false-position-calculate").click(function(){
+		var node = math.parse($("#equation").val());
+		var code = node.compile();
+		if (rootExist(code, $("#false-position-point1").val(), $("#false-position-point2").val()))
+		{
+			$("#false-position-table").append("Root found using false position search in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"] is "+false_position_root(code, $("#false-position-point1").val(), $("#false-position-point2").val(), $("#false-position-decimal").val()));
+		}
+		else
+		{
+			$("#false-position-table").append("Root does not exist in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"]");
+		}
+		
+	});
+	function bisection_root(code,point1,point2,decimal)
+	{
+		$("#bisection-table").html("");
+		var a = roundDecimal(parseFloat(point1),decimal);
+		var b = roundDecimal(parseFloat(point2),decimal);
+		var fa = roundDecimal(code.eval({x:a}),decimal);
+		var fb = roundDecimal(code.eval({x:b}),decimal);
+		var c = roundDecimal((a + b) / 2.0,decimal);
+		var fc = roundDecimal(code.eval({x:c}),decimal);
+		var error = 0.005;
+		var iteration = 0;
+		var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>a</th><th>b</th><th>f(a)</th><th>f(b)</th><th>c</th><th>f(c)</th></thead><tbody>";
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += a;
+		html += "</td>";
+		html += "<td>";
+		html += b;
+		html += "</td>";
+		html += "<td>";
+		html += fa;
+		html += "</td>";
+		html += "<td>";
+		html += fb;
+		html += "</td>";
+		html += "<td>";
+		html += c;
+		html += "</td>";
+		html += "<td>";
+		html += fc;
+		html += "</td></tr>"
+		while (math.abs(fc) > error)
+		{
+			if (fc < 0)
+			{
+				if (fa > 0)
+				{
+					a = a;
+					b = c;
+				}
+				else if (fb > 0)
+				{
+					a = c;
+					b = b;
+				}
+			}
+			else if (fc > 0)
+			{
+				if (fa < 0)
+				{
+					a = a;
+					b = c;
+				}
+				else if (fb < 0)
+				{
+					a = c;
+					b = b;
+				}
+			}
+			iteration += 1;
+			fa = roundDecimal(code.eval({x:a}),decimal);
+			fb = roundDecimal(code.eval({x:b}),decimal);
+			c = roundDecimal((a + b) / 2.0,decimal);
+			fc = roundDecimal(code.eval({x:c}),decimal);
+			html += "<tr><td>";
+			html += iteration;
+			html += "</td>"
+			html += "<td>";
+			html += a;
+			html += "</td>";
+			html += "<td>";
+			html += b;
+			html += "</td>";
+			html += "<td>";
+			html += fa;
+			html += "</td>";
+			html += "<td>";
+			html += fb;
+			html += "</td>";
+			html += "<td>";
+			html += c;
+			html += "</td>";
+			html += "<td>";
+			html += fc;
+			html += "</td></tr>"
+		}
+		html += "</tbody></table>"
+		$("#bisection-table").append(html);
+		return c;
+	}
+	function false_position_root(code,point1,point2,decimal)
+	{
+		$("#false-position-table").html("");
+		var a = roundDecimal(parseFloat(point1),decimal);
+		var b = roundDecimal(parseFloat(point2),decimal);
+		var fa = roundDecimal(code.eval({x:a}),decimal);
+		var fb = roundDecimal(code.eval({x:b}),decimal);
+		var c = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
+		var fc = roundDecimal(code.eval({x:c}),decimal);
+		var error = 0.005;
+		var iteration = 0;
+		var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>a</th><th>b</th><th>f(a)</th><th>f(b)</th><th>c</th><th>f(c)</th></thead><tbody>";
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += a;
+		html += "</td>";
+		html += "<td>";
+		html += b;
+		html += "</td>";
+		html += "<td>";
+		html += fa;
+		html += "</td>";
+		html += "<td>";
+		html += fb;
+		html += "</td>";
+		html += "<td>";
+		html += c;
+		html += "</td>";
+		html += "<td>";
+		html += fc;
+		html += "</td></tr>"
+		while (math.abs(fc) > error)
+		{
+			if (fc < 0)
+			{
+				if (fa > 0)
+				{
+					a = a;
+					b = c;
+				}
+				else if (fb > 0)
+				{
+					a = c;
+					b = b;
+				}
+			}
+			else if (fc > 0)
+			{
+				if (fa < 0)
+				{
+					a = a;
+					b = c;
+				}
+				else if (fb < 0)
+				{
+					a = c;
+					b = b;
+				}
+			}
+			iteration += 1;
+			fa = roundDecimal(code.eval({x:a}),decimal);
+			fb = roundDecimal(code.eval({x:b}),decimal);
+			c = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
+			fc = roundDecimal(code.eval({x:c}),decimal);
+			html += "<tr><td>";
+			html += iteration;
+			html += "</td>"
+			html += "<td>";
+			html += a;
+			html += "</td>";
+			html += "<td>";
+			html += b;
+			html += "</td>";
+			html += "<td>";
+			html += fa;
+			html += "</td>";
+			html += "<td>";
+			html += fb;
+			html += "</td>";
+			html += "<td>";
+			html += c;
+			html += "</td>";
+			html += "<td>";
+			html += fc;
+			html += "</td></tr>"
+		}
+		html += "</tbody></table>"
+		$("#false-position-table").append(html);
+		return c;
+	}
+
+	function rootExist(code,point1,point2)
+	{
+		var a = parseFloat(point1);
+		var b = parseFloat(point2);
+		var fa = code.eval({x:a});
+		var fb = code.eval({x:b});
+		if (fa * fb < 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	function roundDecimal(value, decimals) {
+    	return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+	}
+	$(".choose").click(function(){
+		$("#choose-prompt").show();
+		$("#bisection").show();
+		$("#false-position").show();
+		$("#secant").show();
+		$("#newton").show();
+		$("#bisection-div").hide();
+		$("#false-position-div").hide();
+	});
+});
+</script>
+</body>
