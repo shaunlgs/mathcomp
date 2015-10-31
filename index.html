@@ -5,16 +5,50 @@
 	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 	<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+<style>
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
 
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+.container {
+  width: auto;
+  max-width: 680px;
+  padding: 0 15px;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+</style>
 </head>
 <body>
+<div class="container">
 <h1>Using sevaral methods to find the root of equation</h1>
 <label>Enter your equation: <input type="text" id="equation"></label><br>
 <span id="choose-prompt"><b>Choose a method:</b></span>
 
 <button type="button" id="bisection">Bisection</button>
 <div id="bisection-div" style="display:none;">
-<b>Bisection Method</b><br>
+<span class="label label-primary">Bisection method</span><br>
 <label>Enter your intervals: <input type="number" id="bisection-point1"><input type="number" id="bisection-point2"></label>
 <label>Enter the number of decimals used in calculation: <input type="number" id="bisection-decimal"></label>
 <button type="submit" id="bisection-calculate">Calculate</button><button class="choose">Choose another method</button>
@@ -25,7 +59,7 @@
 
 <button type="button" id="false-position">False Position</button>
 <div id="false-position-div" style="display:none;">
-<b>False Position Method</b><br>
+<span class="label label-primary">False Position Method</span><br>
 <label>Enter your intervals: <input type="number" id="false-position-point1"><input type="number" id="false-position-point2"></label>
 <label>Enter the number of decimals used in calculation: <input type="number" id="false-position-decimal"></label>
 <button type="submit" id="false-position-calculate">Calculate</button><button class="choose">Choose another method</button>
@@ -35,9 +69,34 @@
 </div>
 
 <button type="button" id="secant">Secant</button>
+<div id="secant-div" style="display:none;">
+<span class="label label-primary">Secant Method</span><br>
+<label>Enter your intervals: <input type="number" id="secant-point1"><input type="number" id="secant-point2"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="secant-decimal"></label>
+<button type="submit" id="secant-calculate">Calculate</button><button class="choose">Choose another method</button>
+<div id="secant-table">
+</div>
+<br>
+</div>
 
 <button type="button" id="newton">Newton</button>
+<div id="newton-div" style="display:none;">
+<span class="label label-primary">Newton Method</span><br>
+<label>Enter an initial estimate: <input type="number" id="newton-point"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="newton-decimal"></label>
+<button type="submit" id="newton-calculate">Calculate</button><button class="choose">Choose another method</button>
+<div id="newton-table">
+</div>
+<br>
+</div>
 
+</div>
+
+<footer class="footer">
+      <div class="container">
+        <p class="text-muted"><a href="http://shaunlgs.com">Back to shaunlgs.com</a></p>
+      </div>
+    </footer>
 <script>
 $(document).ready(function(){
 	$("#bisection").click(function(){
@@ -51,17 +110,25 @@ $(document).ready(function(){
 	$("#bisection-calculate").click(function(){
 		var node = math.parse($("#equation").val());
 		var code = node.compile();
-		if (rootExist(code, $("#bisection-point1").val(), $("#bisection-point2").val()))
+		if ($("#bisection-point1").val() >= $("#bisection-point2").val())
 		{
+
 			$("#bisection-table").html("");
-			$("#bisection-table").append("Root found using bisection search in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"] is "+bisection_root(code, $("#bisection-point1").val(), $("#bisection-point2").val(), $("#bisection-decimal").val()));
+			$("#bisection-table").html("Wrong interval!");
 		}
 		else
 		{
-			$("#bisection-table").html("");
-			$("#bisection-table").append("Root does not exist in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"]");
+			if (rootExist(code, $("#bisection-point1").val(), $("#bisection-point2").val()))
+			{
+				$("#bisection-table").html("");
+				$("#bisection-table").append("Root found using bisection search in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"] is "+bisection_root(code, $("#bisection-point1").val(), $("#bisection-point2").val(), $("#bisection-decimal").val()));
+			}
+			else
+			{
+				$("#bisection-table").html("");
+				$("#bisection-table").append("Root does not exist in the interval ["+$("#bisection-point1").val()+", "+$("#bisection-point2").val()+"]");
+			}
 		}
-		
 	});
 	$("#false-position").click(function(){
 		$("#choose-prompt").hide();
@@ -74,17 +141,68 @@ $(document).ready(function(){
 	$("#false-position-calculate").click(function(){
 		var node = math.parse($("#equation").val());
 		var code = node.compile();
-		if (rootExist(code, $("#false-position-point1").val(), $("#false-position-point2").val()))
+		if ($("#false-position-point1").val() >= $("#false-position-point2").val())
 		{
+
 			$("#false-position-table").html("");
-			$("#false-position-table").append("Root found using false position search in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"] is "+false_position_root(code, $("#false-position-point1").val(), $("#false-position-point2").val(), $("#false-position-decimal").val()));
+			$("#false-position-table").html("Wrong interval!");
 		}
 		else
 		{
-			$("#false-position-table").html("");
-			$("#false-position-table").append("Root does not exist in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"]");
+			if (rootExist(code, $("#false-position-point1").val(), $("#false-position-point2").val()))
+			{
+				$("#false-position-table").html("");
+				$("#false-position-table").append("Root found using false position search in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"] is "+false_position_root(code, $("#false-position-point1").val(), $("#false-position-point2").val(), $("#false-position-decimal").val()));
+			}
+			else
+			{
+				$("#false-position-table").html("");
+				$("#false-position-table").append("Root does not exist in the interval ["+$("#false-position-point1").val()+", "+$("#false-position-point2").val()+"]");
+			}
 		}
 		
+	});
+	$("#secant").click(function(){
+		$("#choose-prompt").hide();
+		$("#bisection").hide();
+		$("#false-position").hide();
+		$("#secant").hide();
+		$("#newton").hide();
+		$("#secant-div").show();
+	});
+	$("#secant-calculate").click(function(){
+		var node = math.parse($("#equation").val());
+		var code = node.compile();
+		if ($("#secant-point1").val() >= $("#secant-point2").val())
+		{
+
+			$("#secant-table").html("");
+			$("#secant-table").html("Wrong interval!");
+		}
+		else
+		{
+			$("#secant-table").html("");
+			if (!rootExist(code, $("#secant-point1").val(), $("#secant-point2").val()))
+			{
+				$("#secant-table").html("");
+				$("#secant-table").append("Root does not exist in the interval ["+$("#secant-point1").val()+", "+$("#secant-point2").val()+"]");
+			}
+			$("#secant-table").append("Root found using secant search is "+secant_root(code, $("#secant-point1").val(), $("#secant-point2").val(), $("#secant-decimal").val()));
+		}
+	});
+	$("#newton").click(function(){
+		$("#choose-prompt").hide();
+		$("#bisection").hide();
+		$("#false-position").hide();
+		$("#secant").hide();
+		$("#newton").hide();
+		$("#newton-div").show();
+	});
+	$("#newton-calculate").click(function(){
+		var node = math.parse($("#equation").val());
+		var code = node.compile();
+		$("#newton-table").html("");
+		$("#newton-table").append("Root found using newton search at x = "+newton_root(code, $("#newton-point").val(), $("#newton-decimal").val()));
 	});
 	function bisection_root(code,point1,point2,decimal)
 	{
@@ -268,7 +386,126 @@ $(document).ready(function(){
 		$("#false-position-table").append(html);
 		return c;
 	}
-
+	function secant_root(code,point1,point2,decimal)
+	{
+		var a = roundDecimal(parseFloat(point1),decimal);
+		var b = roundDecimal(parseFloat(point2),decimal);
+		var fa = roundDecimal(code.eval({x:a}),decimal);
+		var fb = roundDecimal(code.eval({x:b}),decimal);
+		var c = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
+		var fc = roundDecimal(code.eval({x:c}),decimal);
+		var error = 0.005;
+		var iteration = 0;
+		var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>a</th><th>f(a)</th></thead><tbody>";
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += a;
+		html += "</td>";
+		html += "<td>";
+		html += fa;
+		html += "</td></tr>";
+		while (math.abs(fc) > error)
+		{
+			a = b;
+			b = c;
+			iteration += 1;
+			fa = roundDecimal(code.eval({x:a}),decimal);
+			fb = roundDecimal(code.eval({x:b}),decimal);
+			c = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
+			fc = roundDecimal(code.eval({x:c}),decimal);
+			html += "<tr><td>";
+			html += iteration;
+			html += "</td>";
+			html += "<td>";
+			html += a;
+			html += "</td>";
+			html += "<td>";
+			html += fa;
+			html += "</td></tr>";
+		}
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += b;
+		html += "</td>";
+		html += "<td>";
+		html += fb;
+		html += "</td></tr>";
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += c;
+		html += "</td>";
+		html += "<td>";
+		html += fc;
+		html += "</td></tr>";
+		html += "</tbody></table>"
+		$("#secant-table").append(html);
+		return c;
+	}
+	function newton_root(code,point,decimal)
+	{
+		var x = roundDecimal(parseFloat(point),decimal);
+		var fx = roundDecimal(code.eval({x:x}),decimal);
+		var fxPrime = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
+		var fc = roundDecimal(code.eval({x:c}),decimal);
+		var error = 0.005;
+		var iteration = 0;
+		var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>a</th><th>f(a)</th></thead><tbody>";
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += a;
+		html += "</td>";
+		html += "<td>";
+		html += fa;
+		html += "</td></tr>";
+		while (math.abs(fc) > error)
+		{
+			a = b;
+			b = c;
+			iteration += 1;
+			fa = roundDecimal(code.eval({x:a}),decimal);
+			fb = roundDecimal(code.eval({x:b}),decimal);
+			c = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
+			fc = roundDecimal(code.eval({x:c}),decimal);
+			html += "<tr><td>";
+			html += iteration;
+			html += "</td>";
+			html += "<td>";
+			html += a;
+			html += "</td>";
+			html += "<td>";
+			html += fa;
+			html += "</td></tr>";
+		}
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += b;
+		html += "</td>";
+		html += "<td>";
+		html += fb;
+		html += "</td></tr>";
+		html += "<tr><td>";
+		html += iteration;
+		html += "</td>";
+		html += "<td>";
+		html += c;
+		html += "</td>";
+		html += "<td>";
+		html += fc;
+		html += "</td></tr>";
+		html += "</tbody></table>"
+		$("#secant-table").append(html);
+		return c;
+	}
 	function rootExist(code,point1,point2)
 	{
 		var a = parseFloat(point1);
@@ -296,6 +533,7 @@ $(document).ready(function(){
 		$("#newton").show();
 		$("#bisection-div").hide();
 		$("#false-position-div").hide();
+		$("#secant-div").hide();
 	});
 });
 </script>
