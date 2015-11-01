@@ -54,14 +54,14 @@ body {
 	</nav>
    </div>
 <div class="container">
-<label>Enter your equation: <input type="text" id="equation"></label><br>
+<label>Enter your equation: <input type="text" id="equation" value="x^3-3x^2+8x-5"></label><br>
 <span id="choose-prompt"><b>Choose a method:</b></span>
 
 <button type="button" id="bisection">Bisection</button>
 <div id="bisection-div" style="display:none;">
 <span class="label label-primary">Bisection method</span><br>
-<label>Enter your intervals: <input type="number" id="bisection-point1"><input type="number" id="bisection-point2"></label>
-<label>Enter the number of decimals used in calculation: <input type="number" id="bisection-decimal"></label>
+<label>Enter your intervals: <input type="number" id="bisection-point1" value="0"><input type="number" id="bisection-point2" value="1"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="bisection-decimal" value="3"></label>
 <button type="submit" id="bisection-calculate">Calculate</button><button class="choose">Choose another method</button>
 <div id="bisection-table">
 </div>
@@ -71,8 +71,8 @@ body {
 <button type="button" id="false-position">False Position</button>
 <div id="false-position-div" style="display:none;">
 <span class="label label-primary">False Position Method</span><br>
-<label>Enter your intervals: <input type="number" id="false-position-point1"><input type="number" id="false-position-point2"></label>
-<label>Enter the number of decimals used in calculation: <input type="number" id="false-position-decimal"></label>
+<label>Enter your intervals: <input type="number" id="false-position-point1" value="0"><input type="number" id="false-position-point2" value="2"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="false-position-decimal" value="3"></label>
 <button type="submit" id="false-position-calculate">Calculate</button><button class="choose">Choose another method</button>
 <div id="false-position-table">
 </div>
@@ -82,8 +82,8 @@ body {
 <button type="button" id="secant">Secant</button>
 <div id="secant-div" style="display:none;">
 <span class="label label-primary">Secant Method</span><br>
-<label>Enter your intervals: <input type="number" id="secant-point1"><input type="number" id="secant-point2"></label>
-<label>Enter the number of decimals used in calculation: <input type="number" id="secant-decimal"></label>
+<label>Enter your intervals: <input type="number" id="secant-point1" value="0"><input type="number" id="secant-point2" value="1"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="secant-decimal" value="3"></label>
 <button type="submit" id="secant-calculate">Calculate</button><button class="choose">Choose another method</button>
 <div id="secant-table">
 </div>
