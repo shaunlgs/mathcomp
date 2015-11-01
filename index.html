@@ -1,4 +1,4 @@
-<!Doctype html>
+<!DOCTYPE html>
 <head>
 	<title>Computational Mathematics - UTM Space</title>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/2.4.1/math.min.js"></script>
@@ -39,17 +39,6 @@ body {
   margin: 20px 0;
 }
 </style>
-<script>
-
-	var key = '8XV52V-P6RE2RGYA9';
-	var url = 'http://api.wolframalpha.com/v2/query?appid=';
-	var req = '&input=pi&format=image,plaintext';
-	var query = url+key+req;
-	$.get(query,function(data,status){
-		alert("Data: " + data + "\nStatus: " + status);
-	});
-
-</script>
 </head>
 <body>
 <div class="container">
@@ -470,6 +459,33 @@ $(document).ready(function(){
 		return c;
 	}
 	function newton_root(code,point,decimal)
+	{
+		// Fire off the request to /form.php
+	    request = $.ajax({
+	        url: "wolfram.php",
+	        type: "post",
+	        data: {type:"xml",input:"derivative+sec%28x%29%2Bx%5E2"}
+	    });
+
+	    // Callback handler that will be called on success
+	    request.done(function (response, textStatus, jqXHR){
+	        // Log a message to the console
+	        console.log("Hooray, it worked!");
+	        console.log(response);
+	        console.log(textStatus);
+	        console.log(jqXHR);
+	    });
+
+	    // Callback handler that will be called on failure
+	    request.fail(function (jqXHR, textStatus, errorThrown){
+	        // Log the error to the console
+	        console.error(
+	            "The following error occurred: "+
+	            textStatus, errorThrown
+	        );
+	    });
+	}
+	function newton_root_backup(code,point,decimal)
 	{
 		var x = roundDecimal(parseFloat(point),decimal);
 		var fx = roundDecimal(code.eval({x:x}),decimal);
