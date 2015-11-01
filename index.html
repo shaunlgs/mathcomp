@@ -39,6 +39,17 @@ body {
   margin: 20px 0;
 }
 </style>
+<script>
+
+	var key = '8XV52V-P6RE2RGYA9';
+	var url = 'http://api.wolframalpha.com/v2/query?appid=';
+	var req = '&input=pi&format=image,plaintext';
+	var query = url+key+req;
+	$.get(query,function(data,status){
+		alert("Data: " + data + "\nStatus: " + status);
+	});
+
+</script>
 </head>
 <body>
 <div class="container">
