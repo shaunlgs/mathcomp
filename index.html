@@ -533,7 +533,8 @@ $(document).ready(function(){
 			var fxPrime = roundDecimal(code2.eval({x:x}),decimal);
 			var error = 0.005;
 			var iteration = 0;
-			var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>x</th><th>f(x)</th><th>f'(x)</th></thead><tbody>";
+			var html = "<table class='table'><thead><tr><th>f(x)</th><th>f'(x)</th></tr></thead><tbody><tr><td>"+$("#equation").val()+"</td><td>"+derivativeEquation+"</td></tr></tbody></table>";
+			html += "<table class='table'><thead><tr><th>i (iteration)</th><th>x</th><th>f(x)</th><th>f'(x)</th></thead><tbody>";
 			html += "<tr><td>";
 			html += iteration;
 			html += "</td>";
