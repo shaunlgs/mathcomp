@@ -3,3 +3,5 @@ Solving non-linear equations using:
 - False Position method
 - Secant method
 - Newton method
+
+Skills used to code this web application: Wolfram Alpha API, JavaScript, JQuery, HTML, CSS.
