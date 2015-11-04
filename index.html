@@ -460,20 +460,75 @@ $(document).ready(function(){
 	}
 	function newton_root(code,point,decimal)
 	{
+		var derivativeEquation = "";
+
+		// get derivative equation by calling Wolfram alpha api
 		// Fire off the request to /form.php
+		var input = "derivative "+$("#equation").val();
 	    request = $.ajax({
 	        url: "wolfram.php",
 	        type: "post",
-	        data: {type:"xml",input:"derivative+sec%28x%29%2Bx%5E2"}
+	        data: {type:"json",input:input}
 	    });
 
 	    // Callback handler that will be called on success
 	    request.done(function (response, textStatus, jqXHR){
 	        // Log a message to the console
-	        console.log("Hooray, it worked!");
-	        console.log(response);
-	        console.log(textStatus);
-	        console.log(jqXHR);
+	        var answer = JSON.parse(JSON.parse(response)['jsonCall'])['pod'][0]['subpod']['plaintext'];
+	        console.log(answer);
+	        for (var i=0; i<answer.length;i++)
+			{
+				if (answer[i] == "=")
+				{
+					derivativeEquation = answer.substring(i+1);
+	    			break;
+				}
+			}
+
+		    // start newton method
+		    var node = math.parse(derivativeEquation);
+			var code2 = node.compile();
+
+			var x = roundDecimal(parseFloat(point),decimal);
+			var fx = roundDecimal(code.eval({x:x}),decimal);
+			var fxPrime = roundDecimal(code2.eval({x:x}),decimal);
+			var error = 0.005;
+			var iteration = 0;
+			var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>x</th><th>f(x)</th><th>f'(x)</th></thead><tbody>";
+			html += "<tr><td>";
+			html += iteration;
+			html += "</td>";
+			html += "<td>";
+			html += x;
+			html += "</td>";
+			html += "<td>";
+			html += fx;
+			html += "</td>";
+			html += "<td>";
+			html += fxPrime;
+			html += "</td></tr>";
+			while (math.abs(fx) > error)
+			{
+				iteration += 1;
+				var x = roundDecimal((x - fx / fxPrime), decimal);
+				var fx = roundDecimal(code.eval({x:x}),decimal);
+				var fxPrime = roundDecimal(code2.eval({x:x}),decimal);
+				html += "<tr><td>";
+				html += iteration;
+				html += "</td>";
+				html += "<td>";
+				html += x;
+				html += "</td>";
+				html += "<td>";
+				html += fx;
+				html += "</td>";
+				html += "<td>";
+				html += fxPrime;
+				html += "</td></tr>";
+			}
+			html += "</tbody></table>"
+			$("#newton-table").append(html);
+			return fx;
 	    });
 
 	    // Callback handler that will be called on failure
@@ -484,65 +539,7 @@ $(document).ready(function(){
 	            textStatus, errorThrown
 	        );
 	    });
-	}
-	function newton_root_backup(code,point,decimal)
-	{
-		var x = roundDecimal(parseFloat(point),decimal);
-		var fx = roundDecimal(code.eval({x:x}),decimal);
-		var fxPrime = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
-		var fc = roundDecimal(code.eval({x:c}),decimal);
-		var error = 0.005;
-		var iteration = 0;
-		var html = "<table class='table'><thead><tr><th>i (iteration)</th><th>a</th><th>f(a)</th></thead><tbody>";
-		html += "<tr><td>";
-		html += iteration;
-		html += "</td>";
-		html += "<td>";
-		html += a;
-		html += "</td>";
-		html += "<td>";
-		html += fa;
-		html += "</td></tr>";
-		while (math.abs(fc) > error)
-		{
-			a = b;
-			b = c;
-			iteration += 1;
-			fa = roundDecimal(code.eval({x:a}),decimal);
-			fb = roundDecimal(code.eval({x:b}),decimal);
-			c = roundDecimal((a * fb - b * fa)/ (fb - fa),decimal);
-			fc = roundDecimal(code.eval({x:c}),decimal);
-			html += "<tr><td>";
-			html += iteration;
-			html += "</td>";
-			html += "<td>";
-			html += a;
-			html += "</td>";
-			html += "<td>";
-			html += fa;
-			html += "</td></tr>";
-		}
-		html += "<tr><td>";
-		html += iteration;
-		html += "</td>";
-		html += "<td>";
-		html += b;
-		html += "</td>";
-		html += "<td>";
-		html += fb;
-		html += "</td></tr>";
-		html += "<tr><td>";
-		html += iteration;
-		html += "</td>";
-		html += "<td>";
-		html += c;
-		html += "</td>";
-		html += "<td>";
-		html += fc;
-		html += "</td></tr>";
-		html += "</tbody></table>"
-		$("#secant-table").append(html);
-		return c;
+
 	}
 	function rootExist(code,point1,point2)
 	{
