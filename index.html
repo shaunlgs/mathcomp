@@ -39,6 +39,42 @@ body {
   margin: 20px 0;
 }
 </style>
+
+<!-- typing effect blinking -->
+<style>
+.typed-cursor{
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+</style>
+<script src="js/typed.min.js"></script>
+<script>
+  $(function(){
+      $(".typing-effect").typed({
+        strings: ["","Calculating..."],
+        typeSpeed: 10,
+        loop: true,
+        cursorChar: "",
+      });
+  });
+</script>
 </head>
 <body>
 <div class="container">
@@ -93,10 +129,12 @@ body {
 <button type="button" id="newton">Newton</button>
 <div id="newton-div" style="display:none;">
 <span class="label label-primary">Newton Method</span><br>
-<label>Enter an initial estimate: <input type="number" id="newton-point"></label>
-<label>Enter the number of decimals used in calculation: <input type="number" id="newton-decimal"></label>
+<label>Enter an initial estimate: <input type="number" id="newton-point" value="1"></label>
+<label>Enter the number of decimals used in calculation: <input type="number" id="newton-decimal" value="5"></label>
 <button type="submit" id="newton-calculate">Calculate</button><button class="choose">Choose another method</button>
 <div id="newton-table">
+</div>
+<div class="loader typing-effect" style="display:none">
 </div>
 <br>
 </div>
@@ -213,7 +251,7 @@ $(document).ready(function(){
 		var node = math.parse($("#equation").val());
 		var code = node.compile();
 		$("#newton-table").html("");
-		$("#newton-table").append("Root found using newton search at x = "+newton_root(code, $("#newton-point").val(), $("#newton-decimal").val()));
+		newton_root(code, $("#newton-point").val(), $("#newton-decimal").val());
 	});
 	function bisection_root(code,point1,point2,decimal)
 	{
@@ -460,6 +498,7 @@ $(document).ready(function(){
 	}
 	function newton_root(code,point,decimal)
 	{
+		$(".loader").show();
 		var derivativeEquation = "";
 
 		// get derivative equation by calling Wolfram alpha api
@@ -527,19 +566,16 @@ $(document).ready(function(){
 				html += "</td></tr>";
 			}
 			html += "</tbody></table>"
+			$(".loader").hide();
 			$("#newton-table").append(html);
-			return fx;
+			$("#newton-table").append("Root found using newton search at x = "+x);
 	    });
 
 	    // Callback handler that will be called on failure
 	    request.fail(function (jqXHR, textStatus, errorThrown){
 	        // Log the error to the console
-	        console.error(
-	            "The following error occurred: "+
-	            textStatus, errorThrown
-	        );
+	        $("#newton-table").append("Sorry, newton method can only call Wolfram Alpha API for 2000 times per month.");
 	    });
-
 	}
 	function rootExist(code,point1,point2)
 	{
@@ -569,6 +605,7 @@ $(document).ready(function(){
 		$("#bisection-div").hide();
 		$("#false-position-div").hide();
 		$("#secant-div").hide();
+		$("#newton-div").hide();
 	});
 });
 </script>
