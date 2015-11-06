@@ -4,4 +4,4 @@ Solving non-linear equations using:
 - Secant method
 - Newton method
 
-Skills used to code this web application: Wolfram Alpha API, JavaScript, JQuery, HTML, CSS.
+Skills used to code this web application: Wolfram Alpha API, Math.js JavaScript, JQuery, HTML, CSS.
