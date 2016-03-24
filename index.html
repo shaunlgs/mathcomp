@@ -157,7 +157,7 @@ $(document).ready(function(){
 		$("#bisection-div").show();
 	});
 	$("#bisection-calculate").click(function(){
-		var node = math.parse($("#equation").val());
+		var node = math.parse(bracketAddMultiplication($("#equation").val()));
 		var code = node.compile();
 		if ($("#bisection-point1").val() >= $("#bisection-point2").val())
 		{
@@ -188,7 +188,7 @@ $(document).ready(function(){
 		$("#false-position-div").show();
 	});
 	$("#false-position-calculate").click(function(){
-		var node = math.parse($("#equation").val());
+		var node = math.parse(bracketAddMultiplication($("#equation").val()));
 		var code = node.compile();
 		if ($("#false-position-point1").val() >= $("#false-position-point2").val())
 		{
@@ -220,7 +220,7 @@ $(document).ready(function(){
 		$("#secant-div").show();
 	});
 	$("#secant-calculate").click(function(){
-		var node = math.parse($("#equation").val());
+		var node = math.parse(bracketAddMultiplication($("#equation").val()));
 		var code = node.compile();
 		if ($("#secant-point1").val() >= $("#secant-point2").val())
 		{
@@ -248,7 +248,7 @@ $(document).ready(function(){
 		$("#newton-div").show();
 	});
 	$("#newton-calculate").click(function(){
-		var node = math.parse($("#equation").val());
+		var node = math.parse(bracketAddMultiplication($("#equation").val()));
 		var code = node.compile();
 		$("#newton-table").html("");
 		newton_root(code, $("#newton-point").val(), $("#newton-decimal").val());
@@ -514,7 +514,6 @@ $(document).ready(function(){
 	    request.done(function (response, textStatus, jqXHR){
 	        // Log a message to the console
 	        var answer = JSON.parse(JSON.parse(response)['jsonCall'])['pod'][0]['subpod']['plaintext'];
-	        console.log(answer);
 	        for (var i=0; i<answer.length;i++)
 			{
 				if (answer[i] == "=")
@@ -525,9 +524,9 @@ $(document).ready(function(){
 			}
 
 		    // start newton method
+		    var derivativeEquation = bracketAddMultiplication(derivativeEquation);
 		    var node = math.parse(derivativeEquation);
 			var code2 = node.compile();
-
 			var x = roundDecimal(parseFloat(point),decimal);
 			var fx = roundDecimal(code.eval({x:x}),decimal);
 			var fxPrime = roundDecimal(code2.eval({x:x}),decimal);
@@ -577,6 +576,26 @@ $(document).ready(function(){
 	        // Log the error to the console
 	        $("#newton-table").append("Sorry, newton method can only call Wolfram Alpha API for 2000 times per month.");
 	    });
+	}
+
+	function bracketAddMultiplication(string)
+	{
+		var newString = "";
+		for(var i=0; i<string.length; i++)
+		{
+			newString += string[i];
+			if (i != string.length-1)
+			{
+				if(string[i+1]=="(")
+				{
+					if(string != "+" && string != "-" && string != "*" && string != "/" && string != "%" && string !="(" && string != "^")
+					{
+						newString += "*";
+					}
+				}
+			}
+		}console.log(newString);
+		return newString;
 	}
 	function rootExist(code,point1,point2)
 	{
